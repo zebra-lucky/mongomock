@@ -3,6 +3,7 @@ from .store import ServerStore
 import itertools
 import mongomock
 from mongomock import codec_options as mongomock_codec_options
+from mongomock import client_session
 from mongomock import ConfigurationError
 from mongomock import helpers
 from mongomock import read_preferences
@@ -177,6 +178,22 @@ class MongoClient(object):
         """
         return True
 
-    def start_session(self, causal_consistency=True, default_transaction_options=None):
+    def __start_session(self, implicit, **kwargs):
+        # Raises ConfigurationError if sessions are not supported.
+        # FIXME server_session = self._get_server_session()
+        # -> self._topology.get_server_session()
+        # -> self._session_pool.get_server_session(session_timeout)
+        stmt = 1  # FIXME session_timeout_minutes
+        server_session = client_session.SESSION_POOL.get_server_session(stmt)
+        opts = client_session.SessionOptions(**kwargs)
+        return client_session.ClientSession(
+            self, server_session, opts, implicit)
+
+    def start_session(self, causal_consistency=None,
+                      default_transaction_options=None, snapshot=False):
         """Start a logical session."""
-        raise NotImplementedError('Mongomock does not support sessions yet')
+        return self.__start_session(
+            False,
+            causal_consistency=causal_consistency,
+            default_transaction_options=default_transaction_options,
+            snapshot=snapshot)

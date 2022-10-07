@@ -469,8 +469,8 @@ class Collection(object):
         return self._db_store[self._name]
 
     def _insert(self, data, session=None, ordered=True):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         if not isinstance(data, Mapping):
             results = []
             write_errors = []
@@ -603,8 +603,8 @@ class Collection(object):
     def _update(self, spec, document, upsert=False, manipulate=False,
                 multi=False, check_keys=False, hint=None, session=None,
                 collation=None, let=None, array_filters=None, **kwargs):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         if hint:
             raise NotImplementedError(
                 'The hint argument of update is valid but has not been implemented in '
@@ -1323,8 +1323,8 @@ class Collection(object):
     def _find_and_modify(self, query, projection=None, update=None,
                          upsert=False, sort=None,
                          return_document=ReturnDocument.BEFORE, session=None, **kwargs):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         remove = kwargs.get('remove', False)
         if kwargs.get('new', False) and remove:
             # message from mongodb
@@ -1387,8 +1387,8 @@ class Collection(object):
                 'collation',
                 'The collation argument of delete is valid but has not been '
                 'implemented in mongomock yet')
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         filter = helpers.patch_datetime_awareness_in_document(filter)
         if filter is None:
             filter = {}
@@ -1472,8 +1472,8 @@ class Collection(object):
         return self.count_documents({}, **kwargs)
 
     def drop(self, session=None):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         self.database.drop_collection(self.name)
 
     if helpers.PYMONGO_VERSION < version.parse('4.0'):
@@ -1481,8 +1481,8 @@ class Collection(object):
             return self.create_index(key_or_list, cache_for, **kwargs)
 
     def create_index(self, key_or_list, cache_for=300, session=None, **kwargs):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         index_list = helpers.create_index_list(key_or_list)
         is_unique = kwargs.pop('unique', False)
         is_sparse = kwargs.pop('sparse', False)
@@ -1555,8 +1555,8 @@ class Collection(object):
         ]
 
     def drop_index(self, index_or_name, session=None):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         if isinstance(index_or_name, list):
             name = helpers.gen_index_name(index_or_name)
         else:
@@ -1567,14 +1567,15 @@ class Collection(object):
             raise OperationFailure('index not found with name [%s]' % name) from err
 
     def drop_indexes(self, session=None):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         self._store.indexes = {}
 
     if helpers.PYMONGO_VERSION < version.parse('4.0'):
         def reindex(self, session=None):
-            if session:
-                raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+            pass
+            # if session:
+            #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
 
     def _list_all_indexes(self):
         if not self._store.is_created:
@@ -1584,8 +1585,8 @@ class Collection(object):
             yield name, information
 
     def list_indexes(self, session=None):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         for name, information in self._list_all_indexes():
             yield dict(
                 information,
@@ -1594,8 +1595,8 @@ class Collection(object):
                 v=2)
 
     def index_information(self, session=None):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         return {
             name: dict(index, v=2)
             for name, index in self._list_all_indexes()
@@ -1609,8 +1610,8 @@ class Collection(object):
                     'PyExecJS is required in order to run Map-Reduce. '
                     "Use 'pip install pyexecjs pymongo' to support Map-Reduce mock."
                 )
-            if session:
-                raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+            # if session:
+            #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
             if limit == 0:
                 limit = None
             start_time = time.perf_counter()
@@ -1707,8 +1708,8 @@ class Collection(object):
                 map_func, reduce_func, {'inline': 1}, full_response, query, limit, session=session)
 
     def distinct(self, key, filter=None, session=None):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         return self.find(filter).distinct(key)
 
     if helpers.PYMONGO_VERSION < version.parse('4.0'):
@@ -1803,8 +1804,8 @@ class Collection(object):
             codec_options=codec_options or self._codec_options, _db_store=self._db_store)
 
     def rename(self, new_name, session=None, **kwargs):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         return self.database.rename_collection(self.name, new_name, **kwargs)
 
     def bulk_write(self, requests, ordered=True, bypass_document_validation=False, session=None):
@@ -1812,11 +1813,11 @@ class Collection(object):
             raise NotImplementedError(
                 'Skipping document validation is a valid MongoDB operation;'
                 ' however Mongomock does not support it yet.')
-        if session:
-            raise_not_implemented(
-                'session',
-                'Sessions are valid in MongoDB 3.6 and newer; however Mongomock'
-                ' does not support them yet.')
+        # if session:
+        #    raise_not_implemented(
+        #        'session',
+        #        'Sessions are valid in MongoDB 3.6 and newer; however Mongomock'
+        #        ' does not support them yet.')
         bulk = BulkOperationBuilder(self, ordered=ordered)
         for operation in requests:
             operation._add_to_bulk(bulk)
@@ -1936,8 +1937,8 @@ class Cursor(object):
         return self
 
     def distinct(self, key, session=None):
-        if session:
-            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
+        # if session:
+        #     raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         if not isinstance(key, str):
             raise TypeError('cursor.distinct key must be a string')
         unique = set()

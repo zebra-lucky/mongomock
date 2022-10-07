@@ -33,6 +33,13 @@ class SessionOptions(object):
                     "default_transaction_options must be an instance of "
                     "mongomock.client_session.TransactionOptions, not: %r" %
                     (default_transaction_options,))
+        else:
+            default_transaction_options = TransactionOptions(
+                read_concern=ReadConcern(),
+                write_concern=WriteConcern(),
+                read_preference=ReadPreference(),
+                max_commit_time_ms=None
+            )
         self._default_transaction_options = default_transaction_options
         self._snapshot = snapshot
 
@@ -236,7 +243,15 @@ class ClientSession(object):
                 # is in the committed state when the session is discarded.
                 self._unpin()
             finally:
-                self._client._return_server_session(self._server_session, lock)
+                if lock:
+                    # with self._lock: FIXME topology._lock
+                    stmt = 1  # FIXME session_timeout_minutes
+                    SESSION_POOL.return_server_session(
+                        self._server_session, stmt)
+                else:
+                    # Called from a __del__ method, can't use a lock.
+                    SESSION_POOL.return_server_session_no_lock(
+                        self._server_session)
                 self._server_session = None
 
     def _check_ended(self):
@@ -288,7 +303,7 @@ class ClientSession(object):
         val = txn_opts and getattr(txn_opts, name)
         if val:
             return val
-        return getattr(self.client, name)
+        raise NotImplementedError('Inheritance from client is not implemented')
 
     def with_transaction(self, callback, read_concern=None, write_concern=None,
                          read_preference=None, max_commit_time_ms=None):
